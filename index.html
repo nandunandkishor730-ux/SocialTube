@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101020">
+<title>SocialTube - Share Your World</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#101020;color:white}
+header{padding:16px 5%;display:flex;align-items:center;justify-content:space-between;background:#19192c;position:sticky;top:0}
+.logo{font-size:25px;font-weight:bold;color:#ff526d}
+.logo span{color:white}
+button{border:0;border-radius:25px;padding:12px 20px;font-weight:bold;cursor:pointer}
+.install{background:#ff526d;color:white}
+.hero{text-align:center;padding:65px 20px 55px;background:linear-gradient(135deg,#28134c,#15152d,#4b1838)}
+.hero h1{font-size:42px;margin:10px 0}
+.hero p{color:#ddd;font-size:17px;line-height:1.6}
+.hero button{margin:12px 5px}
+.primary{background:#ff526d;color:white}
+.secondary{background:white;color:#17172a}
+section{padding:30px 5%}
+h2{font-size:25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:15px}
+.card{background:#202039;border-radius:16px;padding:22px 15px;text-align:center}
+.card b{display:block;font-size:18px;margin:10px}
+.card p{color:#bbb;font-size:14px}
+.notice{background:#252541;padding:18px;border-radius:14px;line-height:1.6}
+footer{text-align:center;padding:25px;color:#aaa;background:#19192c}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">▶ Social<span>Tube</span></div>
+<button class="install" id="installBtn">Install App</button>
+</header>
+
+<div class="hero">
+<h1>Share Your World</h1>
+<p>Watch videos, share moments and build your own creator community.</p>
+<button class="primary" onclick="alert('Sign up feature will be added in the next development step.')">Get Started</button>
+<button class="secondary" onclick="document.getElementById('features').scrollIntoView()">Explore</button>
+</div>
+
+<section id="features">
+<h2>Welcome to SocialTube</h2>
+<div class="cards">
+<div class="card">🎬<b>Short Videos</b><p>Share your videos and moments.</p></div>
+<div class="card">📸<b>Photo Posts</b><p>Share photos with everyone.</p></div>
+<div class="card">❤️<b>Like & Follow</b><p>Connect with your community.</p></div>
+<div class="card">💰<b>Creator Studio</b><p>Creator tools and earnings features.</p></div>
+</div>
+</section>
+
+<section>
+<h2>Install SocialTube</h2>
+<div class="notice">
+Install SocialTube on your phone and open it from your home screen.
+<br><br>
+<strong>Android:</strong> Tap Install App. If the option is not available, use your browser menu and choose Add to Home Screen.
+</div>
+</section>
+
+<footer>© 2026 SocialTube. All rights reserved.</footer>
+
+<script>
+let deferredPrompt;
+const installBtn=document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt',e=>{
+ e.preventDefault();
+ deferredPrompt=e;
+ installBtn.style.display='inline-block';
+});
+installBtn.addEventListener('click',async()=>{
+ if(deferredPrompt){
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;
+ }else{
+  alert('To install, open your browser menu and choose Add to Home Screen. App installation will be enabled after setup.');
+ }
+});
+</script>
+</body>
+  </html>
