@@ -652,11 +652,11 @@ function saveCreatorProfile(){
     alert("Storage full. Please choose smaller photos.");
   }
 }
-
 auth.onAuthStateChanged(function(user){
   document.getElementById("creatorBtn").style.display=
     user?"inline-block":"none";
 });
+
      </script>
 <script>
 if ("serviceWorker" in navigator) {
