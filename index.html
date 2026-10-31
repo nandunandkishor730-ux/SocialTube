@@ -104,68 +104,200 @@ color:#aaa;
 
 <body>
 
-<header>
-<div class="logo">▶ Social<span>Tube</span></div>
-<button class="install" id="installBtn">Install App</button>
+
+<style>
+.st-header{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;background:#17172b;position:sticky;top:0;z-index:100}
+.st-logo{font-size:24px;font-weight:bold;color:#ff526d}
+.st-logo span{color:white}
+.st-icons{display:flex;gap:7px}
+.st-icons button{padding:9px 11px;background:#292940;color:white}
+.st-tabs{display:flex;justify-content:space-around;padding:13px 5px;background:#17172b;position:sticky;top:60px;z-index:50}
+.st-tabs button{background:transparent;color:#aaa;padding:9px;font-size:14px}
+.st-tabs button.active{color:#ff526d;border-bottom:2px solid #ff526d;border-radius:0}
+.st-stories{display:flex;gap:14px;overflow-x:auto;padding:15px}
+.st-story{text-align:center;min-width:65px;font-size:12px;color:#ddd}
+.st-story img{width:58px;height:58px;border-radius:50%;border:3px solid #ff526d;object-fit:cover}
+.st-post{background:#19192b;margin:12px;border-radius:16px;overflow:hidden}
+.st-post-head{display:flex;align-items:center;gap:10px;padding:12px}
+.st-post-head img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.st-post video,.st-post-image{width:100%;max-height:520px;object-fit:cover;background:#080810}
+.st-post-info{padding:12px}
+.st-actions{display:flex;justify-content:space-around;padding:10px}
+.st-actions button{background:transparent;color:white;padding:8px;font-size:14px}
+.st-page{display:none;padding-bottom:90px}
+.st-page.active{display:block}
+.st-bottom{position:fixed;bottom:0;left:0;right:0;background:#17172b;display:flex;justify-content:space-around;padding:10px 3px;z-index:200;border-top:1px solid #333}
+.st-bottom button{background:transparent;color:#ddd;padding:8px 5px;font-size:12px}
+.st-bottom button span{display:block;font-size:20px;margin-bottom:3px}
+.st-input{width:100%;padding:13px;margin:8px 0;background:#202038;color:white;border:1px solid #444;border-radius:10px}
+.st-create-box{padding:15px}
+.st-empty{text-align:center;padding:45px 15px;color:#aaa}
+</style>
+
+<header class="st-header">
+  <div class="st-logo">▶ Social<span>Tube</span></div>
+  <div class="st-icons">
+    <button onclick="showSocialPage('search')">🔍</button>
+    <button onclick="showSocialPage('create')">＋</button>
+    <button onclick="openAuth()">👤</button>
+  </div>
 </header>
 
-<div class="hero">
-<h1>Share Your World</h1>
-<p>Watch videos, share moments and build your own creator community.</p>
-<button class="primary" onclick="document.getElementById('authModal').style.display='flex'">Get Started</button>
-<button class="secondary" onclick="document.getElementById('features').scrollIntoView()">Explore</button>
+<div id="homePage" class="st-page active">
+  <div class="st-tabs">
+    <button class="active" onclick="setFeedTab(this,'For You')">For You</button>
+    <button onclick="setFeedTab(this,'Following')">Following</button>
+    <button onclick="setFeedTab(this,'Trending')">Trending</button>
+  </div>
+
+  <div class="st-stories">
+    <div class="st-story" onclick="openAuth()">
+      <img src="https://placehold.co/100x100/292940/ffffff?text=+" />
+      <div>Your Story</div>
+    </div>
+    <div class="st-story">
+      <img src="https://i.pravatar.cc/100?img=12" />
+      <div>Creator 1</div>
+    </div>
+    <div class="st-story">
+      <img src="https://i.pravatar.cc/100?img=22" />
+      <div>Creator 2</div>
+    </div>
+    <div class="st-story">
+      <img src="https://i.pravatar.cc/100?img=32" />
+      <div>Creator 3</div>
+    </div>
+    <div class="st-story">
+      <img src="https://i.pravatar.cc/100?img=45" />
+      <div>Creator 4</div>
+    </div>
+  </div>
+
+  <div id="feedTabLabel" style="padding:10px 15px;color:#ff7187;font-weight:bold">For You</div>
+
+  <div class="st-post">
+    <div class="st-post-head">
+      <img src="https://i.pravatar.cc/100?img=12">
+      <div><b>SocialTube Creator</b><div style="color:#aaa;font-size:12px">Suggested video</div></div>
+    </div>
+    <div class="st-empty">🎬<br>Videos will appear here when creators upload them.</div>
+    <div class="st-post-info">Welcome to SocialTube! Discover videos and creators.</div>
+    <div class="st-actions">
+      <button onclick="toggleLike(this)">♡ Like</button>
+      <button onclick="openAuth()">💬 Comment</button>
+      <button onclick="shareSocialPost()">↗ Share</button>
+      <button onclick="toggleSave(this)">🔖 Save</button>
+    </div>
+  </div>
 </div>
 
-<section id="features">
-<h2>Welcome to SocialTube</h2>
-
-<div class="cards">
-
-<div class="card">
-🎬
-<b>Short Videos</b>
-<p>Share your short videos and moments.</p>
+<div id="searchPage" class="st-page">
+  <div class="st-create-box">
+    <h2>Search SocialTube</h2>
+    <input class="st-input" id="searchInput" placeholder="Search videos, creators..." />
+    <button class="install" onclick="searchSocial()">Search</button>
+    <div id="searchMessage" class="st-empty">Find creators and videos on SocialTube.</div>
+  </div>
 </div>
 
-<div class="card">
-🎥
-<b>Long Videos</b>
-<p>Upload videos of any length. No fixed time limit.</p>
+<div id="createPage" class="st-page">
+  <div class="st-create-box">
+    <h2>Create Post</h2>
+    <p style="color:#aaa">Share a video or photo with your community.</p>
+    <input class="st-input" id="postCaption" placeholder="Write a caption..." />
+    <input class="st-input" id="postFile" type="file" accept="video/*,image/*" />
+    <button class="install" onclick="previewSocialPost()">Preview Post</button>
+    <div id="postPreview" class="st-empty">Your selected media preview will appear here.</div>
+    <p style="color:#aaa;font-size:12px">Preview only: online publishing is not connected yet.</p>
+  </div>
 </div>
 
-<div class="card">
-📸
-<b>Photo Posts</b>
-<p>Share photos with everyone.</p>
+<div id="profilePage" class="st-page">
+  <div class="st-empty">
+    <div style="font-size:55px">👤</div>
+    <h2>Your Profile</h2>
+    <p>Sign in to access your creator profile.</p>
+    <button class="install" onclick="openAuth()">Login / Create Account</button>
+  </div>
 </div>
 
-<div class="card">
-❤️
-<b>Like & Follow</b>
-<p>Connect with creators and followers.</p>
-</div>
+<nav class="st-bottom">
+  <button onclick="showSocialPage('home')"><span>⌂</span>Home</button>
+  <button onclick="showSocialPage('search')"><span>⌕</span>Search</button>
+  <button onclick="showSocialPage('create')"><span>＋</span>Create</button>
+  <button onclick="showSocialPage('profile')"><span>♙</span>Profile</button>
+</nav>
 
-<div class="card">
-💰
-<b>Creator Studio</b>
-<p>Manage your channel and creator earnings.</p>
-</div>
+<script>
+function showSocialPage(page){
+  document.querySelectorAll('.st-page').forEach(function(p){
+    p.classList.remove('active');
+  });
+  var target=document.getElementById(page+'Page');
+  if(target) target.classList.add('active');
+  window.scrollTo(0,0);
+}
 
-</div>
-</section>
+function setFeedTab(button,name){
+  document.querySelectorAll('.st-tabs button').forEach(function(b){
+    b.classList.remove('active');
+  });
+  button.classList.add('active');
+  document.getElementById('feedTabLabel').innerText=name;
+}
 
-<section>
-<h2>Install SocialTube</h2>
-<div class="notice">
-Install SocialTube on your phone and open it from your home screen.
-<br><br>
-<strong>Android:</strong> Tap Install App. If the install option does not appear, use Chrome menu and choose Add to Home screen.
-</div>
-</section>
+function toggleLike(button){
+  if(button.innerText.includes('♡')){
+    button.innerText='♥ Liked';
+    button.style.color='#ff526d';
+  }else{
+    button.innerText='♡ Like';
+    button.style.color='white';
+  }
+}
 
-<footer>
-© 2026 SocialTube. All rights reserved.
-</footer>
+function toggleSave(button){
+  if(button.innerText.includes('Save')){
+    button.innerText='🔖 Saved';
+    button.style.color='#ff526d';
+  }else{
+    button.innerText='🔖 Save';
+    button.style.color='white';
+  }
+}
+
+function shareSocialPost(){
+  if(navigator.share){
+    navigator.share({title:'SocialTube',text:'Check out SocialTube!'});
+  }else{
+    alert('SocialTube link: https://nandunandkishor730-ux.github.io/SocialTube/');
+  }
+}
+
+function searchSocial(){
+  var q=document.getElementById('searchInput').value.trim();
+  document.getElementById('searchMessage').innerText=
+    q ? 'Search feature will be connected to the video database later.' : 'Please enter a search term.';
+}
+
+function previewSocialPost(){
+  var file=document.getElementById('postFile').files[0];
+  var area=document.getElementById('postPreview');
+  if(!file){
+    area.innerText='Please select a photo or video first.';
+    return;
+  }
+  var url=URL.createObjectURL(file);
+  if(file.type.startsWith('video/')){
+    area.innerHTML='<video controls style="width:100%;max-height:350px"></video>';
+    area.querySelector('video').src=url;
+  }else{
+    area.innerHTML='<img style="width:100%;max-height:350px;object-fit:contain" />';
+    area.querySelector('img').src=url;
+  }
+}
+   </script>
+ 
 
 <script>
 let deferredPrompt;
