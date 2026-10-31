@@ -529,7 +529,68 @@ Creator Dashboard
     </h3>
 
     <div class="creator-menu">
-      <button onclick="alert('Video Upload will be added next.')">🎬 Upload Video</button>
+      
+<div style="margin:10px 0;">
+  <button type="button" onclick="document.getElementById('stVideoInput').click()">🎬 Upload Video</button>
+
+  <input
+    type="file"
+    id="stVideoInput"
+    accept="video/*"
+    style="display:none"
+    onchange="stPreviewVideo(this)"
+  >
+
+  <div id="stVideoPreviewBox" style="display:none; margin-top:15px; padding:12px; background:#222; border-radius:12px; color:white;">
+    <p id="stVideoName">Selected video</p>
+    <video id="stVideoPreview" controls playsinline style="width:100%; max-height:300px; border-radius:10px;"></video>
+    <p style="color:#ffd166;">यह अभी केवल आपके मोबाइल पर Preview है। ऑनलाइन अपलोड नहीं हुआ है।</p>
+    <button type="button" onclick="stClearVideo()">Remove Video</button>
+  </div>
+</div>
+
+<script>
+let stVideoObjectUrl = null;
+
+function stPreviewVideo(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("video/")) {
+    alert("कृपया वीडियो फाइल चुनें।");
+    input.value = "";
+    return;
+  }
+
+  if (stVideoObjectUrl) {
+    URL.revokeObjectURL(stVideoObjectUrl);
+  }
+
+  stVideoObjectUrl = URL.createObjectURL(file);
+
+  document.getElementById("stVideoName").textContent =
+    "Selected: " + file.name;
+
+  document.getElementById("stVideoPreview").src = stVideoObjectUrl;
+  document.getElementById("stVideoPreviewBox").style.display = "block";
+}
+
+function stClearVideo() {
+  const video = document.getElementById("stVideoPreview");
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  if (stVideoObjectUrl) {
+    URL.revokeObjectURL(stVideoObjectUrl);
+    stVideoObjectUrl = null;
+  }
+
+  document.getElementById("stVideoInput").value = "";
+  document.getElementById("stVideoPreviewBox").style.display = "none";
+}
+</script>
+     
       <button onclick="alert('Photo Upload will be added next.')">📸 Upload Photo</button>
       <button onclick="alert('My Videos will be added next.')">▶ My Videos</button>
       <button onclick="alert('Followers feature will be added next.')">👥 Followers</button>
