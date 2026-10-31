@@ -360,19 +360,24 @@ async function handleAuthSubmit(){
 }
 
 auth.onAuthStateChanged(user=>{
- const form = document.getElementById("authForm");
- const loggedIn = document.getElementById("authLoggedIn");
+  const form = document.getElementById("authForm");
+  const loggedIn = document.getElementById("authLoggedIn");
+  const modal = document.getElementById("authModal");
+  const creatorBtn = document.getElementById("creatorBtn");
 
- if(user){
-  form.style.display="none";
-  loggedIn.style.display="block";
-  document.getElementById("authTitle").innerText="My Account";
-  document.getElementById("authUserEmail").innerText=user.email;
-  document.getElementById("authMessage").innerText="";
- }else{
-  form.style.display="block";
-  loggedIn.style.display="none";
- }
+  if(user){
+    form.style.display="none";
+    loggedIn.style.display="block";
+    document.getElementById("authTitle").innerText="My Account";
+    document.getElementById("authUserEmail").innerText=user.email;
+    document.getElementById("authMessage").innerText="";
+    modal.style.display="none";
+    creatorBtn.style.display="inline-block";
+  }else{
+    form.style.display="block";
+    loggedIn.style.display="none";
+    creatorBtn.style.display="none";
+  }
 });
 
 async function logoutUser(){
