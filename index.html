@@ -721,7 +721,8 @@ auth.onAuthStateChanged(function(user){
   if(user){
     creatorBtn.style.display = "inline-block";
     modal.style.display = "none";
-    openCreatorDashboard();
+    dashboard.style.display = "none";
+showSocialPage("home");
   }else{
     creatorBtn.style.display = "none";
     dashboard.style.display = "none";
