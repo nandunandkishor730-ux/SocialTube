@@ -110,7 +110,7 @@ color:#aaa;
 <div class="hero">
 <h1>Share Your World</h1>
 <p>Watch videos, share moments and build your own creator community.</p>
-<button class="primary" onclick="alert('Signup feature coming soon!')">Get Started</button>
+<button class="primary" onclick="openAuth()">Get Started</button>
 <button class="secondary" onclick="document.getElementById('features').scrollIntoView()">Explore</button>
 </div>
 
@@ -185,6 +185,206 @@ alert('Open Chrome menu and select Add to Home screen.');
 }
 });
 </script>
+<style>
+.auth-modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:rgba(0,0,0,.85);
+ z-index:9999;
+ align-items:center;
+ justify-content:center;
+ padding:18px;
+}
+.auth-box{
+ background:#202038;
+ padding:25px;
+ border-radius:18px;
+ width:100%;
+ max-width:380px;
+ color:white;
+}
+.auth-box h2{margin-top:0}
+.auth-box input{
+ width:100%;
+ padding:14px;
+ margin:9px 0;
+ border:1px solid #555;
+ border-radius:10px;
+ background:#101020;
+ color:white;
+ font-size:16px;
+}
+.auth-box button{
+ width:100%;
+ margin-top:10px;
+}
+.auth-close{
+ float:right;
+ background:transparent;
+ color:white;
+ padding:0 8px;
+ font-size:24px;
+}
+.auth-link{
+ color:#ff7187;
+ cursor:pointer;
+ text-align:center;
+ margin-top:15px;
+}
+#authMessage{
+ color:#ffd166;
+ font-size:14px;
+ line-height:1.5;
+}
+#authStatus{
+ text-align:center;
+ color:#ddd;
+ margin:12px 0;
+}
+</style>
 
+<div class="auth-modal" id="authModal">
+ <div class="auth-box">
+  <button class="auth-close" onclick="closeAuth()">×</button>
+  <h2 id="authTitle">Create Account</h2>
+
+  <div id="authForm">
+   <input id="authEmail" type="email" placeholder="Enter your email">
+   <input id="authPassword" type="password" placeholder="Password (minimum 6 characters)">
+
+   <button class="primary" id="authSubmit" onclick="handleAuthSubmit()">Register</button>
+
+   <p class="auth-link" id="authSwitch" onclick="switchAuthMode()">Already have an account? Login</p>
+  </div>
+
+  <div id="authLoggedIn" style="display:none">
+   <p>You are logged in!</p>
+   <p id="authUserEmail"></p>
+   <button class="primary" onclick="logoutUser()">Logout</button>
+  </div>
+
+  <p id="authMessage"></p>
+ </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+ apiKey: "AIzaSyA4sNt8Ox6hoGcK6xPTZ5_o_KOjAxNWJI",
+ authDomain: "socialtube-41590.firebaseapp.com",
+ projectId: "socialtube-41590",
+ storageBucket: "socialtube-41590.firebasestorage.app",
+ messagingSenderId: "494534454695",
+ appId: "1:494534454695:web:0f3a14959b4ad9ef0c5a82",
+ measurementId: "G-Z1DHLB1P96"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+let authMode = "register";
+
+function openAuth(){
+ document.getElementById("authModal").style.display="flex";
+ document.getElementById("authMessage").innerText="";
+}
+
+function closeAuth(){
+ document.getElementById("authModal").style.display="none";
+}
+
+function switchAuthMode(){
+ authMode = authMode === "register" ? "login" : "register";
+
+ document.getElementById("authTitle").innerText =
+ authMode === "register" ? "Create Account" : "Login";
+
+ document.getElementById("authSubmit").innerText =
+ authMode === "register" ? "Register" : "Login";
+
+ document.getElementById("authSwitch").innerText =
+ authMode === "register"
+ ? "Already have an account? Login"
+ : "New user? Create Account";
+
+ document.getElementById("authMessage").innerText="";
+}
+
+async function handleAuthSubmit(){
+ const email = document.getElementById("authEmail").value.trim();
+ const password = document.getElementById("authPassword").value;
+ const message = document.getElementById("authMessage");
+
+ if(!email || !password){
+  message.innerText="Please enter email and password.";
+  return;
+ }
+
+ if(password.length < 6){
+  message.innerText="Password must be at least 6 characters.";
+  return;
+ }
+
+ const submitButton = document.getElementById("authSubmit");
+ submitButton.disabled=true;
+ submitButton.innerText="Please wait...";
+
+ try{
+  if(authMode === "register"){
+   await auth.createUserWithEmailAndPassword(email,password);
+   message.innerText="Account created successfully!";
+  }else{
+   await auth.signInWithEmailAndPassword(email,password);
+   message.innerText="Login successful!";
+  }
+ }catch(error){
+  const messages = {
+   "auth/email-already-in-use":"This email is already registered. Please login.",
+   "auth/invalid-email":"Please enter a valid email.",
+   "auth/weak-password":"Please choose a stronger password.",
+   "auth/user-not-found":"Account not found. Please register first.",
+   "auth/wrong-password":"Incorrect password.",
+   "auth/invalid-credential":"Email or password is incorrect.",
+   "auth/network-request-failed":"Internet connection problem. Try again."
+  };
+
+  message.innerText=messages[error.code] || error.message;
+ }finally{
+  submitButton.disabled=false;
+  submitButton.innerText=authMode === "register" ? "Register" : "Login";
+ }
+}
+
+auth.onAuthStateChanged(user=>{
+ const form = document.getElementById("authForm");
+ const loggedIn = document.getElementById("authLoggedIn");
+
+ if(user){
+  form.style.display="none";
+  loggedIn.style.display="block";
+  document.getElementById("authTitle").innerText="My Account";
+  document.getElementById("authUserEmail").innerText=user.email;
+  document.getElementById("authMessage").innerText="";
+ }else{
+  form.style.display="block";
+  loggedIn.style.display="none";
+ }
+});
+
+async function logoutUser(){
+ try{
+  await auth.signOut();
+  authMode="register";
+  closeAuth();
+ }catch(error){
+  document.getElementById("authMessage").innerText=error.message;
+ }
+}
+ </script>
 </body>
  </html>
