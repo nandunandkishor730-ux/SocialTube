@@ -652,7 +652,20 @@ function saveCreatorProfile(){
     alert("Storage full. Please choose smaller photos.");
   }
 }
-creatorBtn.style.display
+auth.onAuthStateChanged(function(user){
+  const creatorBtn = document.getElementById("creatorBtn");
+  const modal = document.getElementById("authModal");
+  const dashboard = document.getElementById("creatorDashboard");
+
+  if(user){
+    creatorBtn.style.display = "inline-block";
+    modal.style.display = "none";
+    openCreatorDashboard();
+  }else{
+    creatorBtn.style.display = "none";
+    dashboard.style.display = "none";
+  }
+});
 
      </script>
 <script>
