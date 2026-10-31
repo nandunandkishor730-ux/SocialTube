@@ -658,5 +658,19 @@ auth.onAuthStateChanged(function(user){
     user?"inline-block":"none";
 });
      </script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(function () {
+        console.log("SocialTube is ready!");
+      })
+      .catch(function (error) {
+        console.error("Service Worker Error:", error);
+      });
+  });
+}
+</script>
 </body>
  </html>
